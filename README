@@ -1,12 +1,16 @@
-Simple-Apns is a simple apple notification server for you own apple app use!
-  just config the config/config.ini and put your key and cert file in some directorys for use!
-then type "python SimpleApns.py start" , so ,it's so simple
-  certainly you must config Q4M  :)
+Simple-Apns is a simple apple notification server for your own apple app use!
 
-*important*
-    this project have not been finished , I will do it for some time!
+You can  just config the "config/config.ini" file then put your ssl key file(like key.pem and cert.pem)
+ into some directorys where this script have priviledge to access
 
-Anyone who like this,can contact me via chunshengsterATgmail.com
+Then type "python SimpleApns.py start" in the console, so ,it's so simple ！
+  certainly you must config Q4M first :)
 
-plan:
-    1,add redisQ support
+*Important*
+    This project have not been finished , I must do it for a little more time!
+
+Anyone who is interested in this project can contact with me via chunshengsterATgmail.com
+
+PLAN:
+    1,add feedfack call back action
+    2,add redisQ support

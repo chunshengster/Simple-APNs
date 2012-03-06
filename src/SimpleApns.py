@@ -18,10 +18,10 @@ CONFIG_FILE = os.getcwd()+('/config/config.ini')
 class SimpleApns(object):
     def __init__(self):
         self.name = 'SimpleApns'
-        self.working_directory = '.'
+        self.working_directory = os.getcwd()
         self.stdin_path = os.devnull
         self.stdout_path = os.path.join('log/SimpleApns.log')
-        self.stderr_path = os.path.join('log/SimpleApns.log')
+        self.stderr_path = os.path.join('log/SimpleApns_error.log')
         self.pidfile_path = '/var/run/simpleapns.pid'
         self.pidfile_timeout = 120
 
@@ -30,13 +30,12 @@ class SimpleApns(object):
         sys.exit()
 
     def run(self):
+        """
+
+        """
         try:
             cfg = ConfigParser()
             re = cfg.read(CONFIG_FILE)
-            print os.path.dirname(CONFIG_FILE)
-            print os.path.abspath(CONFIG_FILE)
-            print os.path.basename(CONFIG_FILE)
-
             if CONFIG_FILE not in re:
                 self.error_parse_config()
         except Exception:
@@ -64,6 +63,7 @@ class SimpleApns(object):
 
 if  '__main__' == __name__:
     simpleapns = SimpleApns()
+#    simpleapns.run()
     runner = DaemonRunner(simpleapns)
     runner.do_action()
 

@@ -9,7 +9,7 @@ import apns
 import logging
 import MySQLdb
 import time
-import sys,os
+import sys, os
 import traceback
 from python_q4m.q4m import Q4M
 
@@ -17,7 +17,6 @@ try:
     import json
 except:
     import simplejson as json
-
 
 class App(object):
     '''
@@ -45,11 +44,12 @@ class App(object):
              self.mysql_pass,
              self.Q_Table,
              self.app_name) = (
-            sandBox, cert_file, key_file, mysql_host, mysql_db, mysql_user, mysql_pass, Q_Table, app_name)
+                sandBox, cert_file, key_file, mysql_host, mysql_db, mysql_user, mysql_pass, Q_Table, app_name)
             self.apns_obj = apns.APNs(use_sandbox=self.sandBox, cert_file=self.cert_file, key_file=self.key_file)
 
+            dirname, _ = os.path.split(os.path.abspath(__file__))
             logging.basicConfig(
-                filename=os.getcwd()+"log/"+self.app_name + ".log",
+                filename=dirname + "/../log/App/" + self.app_name + ".log",
                 format="%(levelname)s-%(name)s : %(asctime)s - %(message)s",
                 filemode='a',
                 level=logging.DEBUG
@@ -88,8 +88,8 @@ class App(object):
                         q.abort()
                         #TODO: Do some error log
             else:
-                self.logger.error("%s q=ApnsQueue.getQueue(%s, %s, %s, %s, %s) ,q is None"
-                % (self.app_name, self.mysql_host, self.mysql_db, self.mysql_user, self.mysql_pass, self.Q_Table))
+                self.logger.error("{0:>s} q=ApnsQueue.getQueue({1:>s}, {2:>s}, {3:>s}, {4:>s}, {5:>s}) ,q is None")
+                time.sleep(10)
 
     def _push_to_apple(self, device_token, payload_json):
         """
@@ -142,12 +142,13 @@ class App(object):
                     #                            user_name,
                     #                            password,
                     #                            Q_Table))
-                    App.ApnsQueue.__q = App.ApnsQueue(conn, Q_Table)
+                    if conn:
+                        App.ApnsQueue.__q = App.ApnsQueue(conn, Q_Table)
                     #                    App.get_logger.info("{0:>s} :App.ApnsQueue.__q finished connect".format(App.app_name))
 
                 except Exception as e:
                     print e
-                    sys.exit()
+                    return False
             return App.ApnsQueue.__q
 
             

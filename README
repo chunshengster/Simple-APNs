@@ -1,1 +1,12 @@
-This file was created by PyCharm 1.5.3 for binding GitHub repository
+Simple-Apns is a simple apple notification server for you own apple app use!
+  just config the config/config.ini and put your key and cert file in some directorys for use!
+then type "python SimpleApns.py start" , so ,it's so simple
+  certainly you must config Q4M  :)
+
+*important*
+    this project have not finished , I will do it for some time!
+
+anyone who like this,can contact me via chunshengsterATgmail.com
+
+plan:
+    1,add redisQ support

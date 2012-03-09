@@ -2,7 +2,7 @@
 #coding=utf-8
 '''
 Created on 2012-2-25
-@author: chunshengster@gmail.com
+@author: Wang Chunsheng<chunshengster@gmail.com>
 simple  apns server for easy use
 '''
 
@@ -63,7 +63,6 @@ class SimpleApns(object):
 
 if  '__main__' == __name__:
     simpleapns = SimpleApns()
-#    simpleapns.run()
     runner = DaemonRunner(simpleapns)
     runner.do_action()
 

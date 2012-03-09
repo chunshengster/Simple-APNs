@@ -1,7 +1,7 @@
 #encoding=utf-8
 '''
 Created on 2012-2-28
-@author: chunshengster@gmail.com
+@author: Wang chunsheng<chunshengster@gmail.com>
 
 '''
 
@@ -37,7 +37,10 @@ class App(object):
         Constructor
         '''
         if cert_file is None or key_file is None or app_name is None:
-            print "Init App error"
+            sys.stderr.writelines(
+                '%s : Init App error:\n\t With parameters: sandBox = %s cert_file=%s, key_file=%s, mysql_host=%s, mysql_db=%s, mysql_user=%s, mysql_pass=%s, Q_Table=%s app_name=%s' % (
+                    time.asctime(), cert_file, key_file, mysql_host, mysql_db, mysql_user,
+                    mysql_pass, Q_Table, app_name))
             return None
         else:
             (self.sandBox, self.cert_file, self.key_file, self.mysql_host, self.mysql_db, self.mysql_user,
@@ -49,22 +52,28 @@ class App(object):
 
             dirname, _ = os.path.split(os.path.abspath(__file__))
             logging.basicConfig(
-                filename=dirname + "/../log/App/" + self.app_name + ".log",
+                filename='%s/../log/App/%s.log' % (dirname, self.app_name),
                 format="%(levelname)s-%(name)s : %(asctime)s - %(message)s",
                 filemode='a',
                 level=logging.DEBUG
+                #TODO: mark level as a parameter
             )
             self.logger = logging.getLogger(self.app_name)
-            self.logger.log(logging.INFO, "App Class init by parameters: {0:>s} ".format(':'.join(str(i) for i in(\
-                self.cert_file, self.key_file,\
-                self.sandBox, self.mysql_db,\
-                self.mysql_user, self.mysql_pass,\
-                self.Q_Table, self.app_name))))
+            self.logger.log(logging.INFO,
+                            'App Class init by parameters: parameters: sandBox = {0:>s} cert_file={1:>s}, key_file={2:>s},\
+                                mysql_host={3:>s}, mysql_db={4:>s}, mysql_user={5:>s}, mysql_pass={6:>s}, Q_Table={7:>s} app_name={8:>s}'\
+                            .format(str(self.sandBox), self.cert_file, self.key_file, self.mysql_host, self.mysql_db,
+                                    self.mysql_user, self.mysql_pass, self.Q_Table, self.app_name))
+            sys.stdout.writelines(
+                'App Class init by parameters: parameters: sandBox = {0:>s} cert_file={1:>s}, key_file={2:>s},\
+           mysql_host={3:>s}, mysql_db={4:>s}, mysql_user={5:>s}, mysql_pass={6:>s}, Q_Table={7:>s} app_name={8:>s}'\
+                .format(str(self.sandBox), self.cert_file, self.key_file, self.mysql_host, self.mysql_db,
+                        self.mysql_user, self.mysql_pass, self.Q_Table, self.app_name))
 
 
     def run(self):
         """
-        App run major Loop
+        App run major loop
         """
         self.logger.info("%s got into process run " % self.app_name)
         while True:
@@ -75,20 +84,32 @@ class App(object):
                     ''
                     #TODO:在队列空闲的时间内，在apple feedback server获取失效的device token
                     ''
-                    self.apns_obj.feedback_server.items()
+                    #self.apns_obj.feedback_server.items()
                 else:
                     res = q.dequeue()
                     self.logger.info("%s got item (%s,%s) in queue %s" % (
                         self.app_name, res['device_token'], res['payload'], self.Q_Table))
-                    if self._push_to_apple(res['device_token'], res['payload']):
-                        pass
-                    else:
-                        self.logger.error("%s got item (%s,%s) in queue %s" % (
-                            self.app_name, res['device_token'], res['payload'], self.Q_Table))
-                        q.abort()
-                        #TODO: Do some error log
+                    res = self._push_to_apple(res['device_token'], res['payload'])
+                    if res  is False:
+                        self.logger.error(
+                            '{0:>s} got item ({1:>s},{2:>s}) in queue {3:>s}'.format(self.app_name, res['device_token'],
+                                                                                     res['payload'], self.Q_Table))
+                        q.end()
+                        '''
+                        write error to stderr,if you run in daemon,this log will write to "SimpleApns_error.log"
+                        '''
+                        sys.stderr.writelines(
+                            '{0:>s} got item ({1:>s},{2:>s}) in queue {3:>s}'.format(self.app_name, res['device_token'],
+                                                                                     res['payload'], self.Q_Table))
+                    elif res is None:
+                        q.about()
             else:
-                self.logger.error("{0:>s} q=ApnsQueue.getQueue({1:>s}, {2:>s}, {3:>s}, {4:>s}, {5:>s}) ,q is None")
+                self.logger.error(
+                    '{0:>s} q=ApnsQueue.getQueue({1:>s}, {2:>s}, {3:>s}, {4:>s}, {5:>s}) ,q is None'.format(
+                        self.app_name,self.mysql_host, self.mysql_db, self.mysql_user, self.mysql_pass, self.Q_Table))
+                sys.stderr.writelines(
+                    '{0:>s} q=ApnsQueue.getQueue({1:>s}, {2:>s}, {3:>s}, {4:>s}, {5:>s}) ,q is None'.format(
+                        self.app_name,self.mysql_host, self.mysql_db, self.mysql_user, self.mysql_pass, self.Q_Table))
                 time.sleep(10)
 
     def _push_to_apple(self, device_token, payload_json):
@@ -104,11 +125,13 @@ class App(object):
             self.logger.info(
                 "%s send msg to %s , msg : %s" % (self.app_name, device_token, payload_json))
             return True
+        except ValueError:
+            return False
         except Exception as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_exception(exc_type, exc_value, exc_traceback,
-                                      limit=2, file=sys.stdout)
-            self.logger.error("%s got error %s : %s Error : %s" % (self.app_name, device_token, payload_json, e))
+                                      limit=2, file=sys.stderr)
+            self.logger.error('%s got error %s : %s Error : %s' % (self.app_name, device_token, payload_json, e))
             return False
 
     @property
@@ -116,14 +139,13 @@ class App(object):
         return self.logger
 
     class ApnsQueue(Q4M):
-        __q = None
+        _q = None
 
         def __init__(self, conn, Q_Table):
             super(self.__class__, self).__init__(conn)
             self.table = Q_Table
             self.columns = ['device_token', 'payload']
 
-        #            print self
 
         @staticmethod
         def getQueue(mysql_host, db_name, user_name, password, Q_Table):
@@ -131,25 +153,25 @@ class App(object):
             不太严谨的单例模式，每个进程仅使用一个Q4M数据库的连接
             关注“App.ApnsQueue.__q” 写法，在inner class中，访问 global variable的写法
             """
-            if App.ApnsQueue.__q is None:
+            if App.ApnsQueue._q is None:
                 try:
                     conn = MySQLdb.connect(host=mysql_host, db=db_name, user=user_name, passwd=password)
-                    #                    App.get_logger.info(
-                    #                        "{0:>s} :App.ApnsQueue.__q is None ,connect with ({1:>s} : {2:>s} : {3:>s} : {4:>s} :{5:>s})".format(
-                    #                            App.app_name,
-                    #                            mysql_host,
-                    #                            db_name,
-                    #                            user_name,
-                    #                            password,
-                    #                            Q_Table))
+#                    App().logger.info(
+#                        '{0:>s} :App.ApnsQueue.__q is None ,connect with ({1:>s} : {2:>s} : {3:>s} : {4:>s} :{5:>s})'.format(
+#                            App.app_name,
+#                            mysql_host,
+#                            db_name,
+#                            user_name,
+#                            password,
+#                            Q_Table))
                     if conn:
-                        App.ApnsQueue.__q = App.ApnsQueue(conn, Q_Table)
-                    #                    App.get_logger.info("{0:>s} :App.ApnsQueue.__q finished connect".format(App.app_name))
+                        App.ApnsQueue._q = App.ApnsQueue(conn, Q_Table)
+#                        App().logger.info('{0:>s} :App.ApnsQueue.__q finished connect'.format(App.app_name))
 
                 except Exception as e:
-                    print e
-                    return False
-            return App.ApnsQueue.__q
+                    raise e
+                    return None
+            return App.ApnsQueue._q
 
             
             

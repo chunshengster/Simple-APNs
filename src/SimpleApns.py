@@ -47,12 +47,15 @@ class SimpleApns(object):
             p = Process(target=runApp, args=(cfg.getboolean(i, 'app_sandbox'),
                                              cfg.get(i, 'app_cert'),
                                              cfg.get(i, 'app_key'),
-                                             cfg.get(i, 'host'),
+                                             cfg.get(i, 'db_host'),
+                                             cfg.getint(i,'db_port'),
                                              cfg.get(i, 'db_name'),
                                              cfg.get(i, 'db_username'),
                                              cfg.get(i, 'db_password'),
                                              cfg.get(i, 'app_queue_table'),
-                                             cfg.get(i, 'app_name'),))
+                                             cfg.get(i, 'app_name'),
+                                             cfg.getboolean(i,'debug'),
+                                             cfg.get(i,'feedback_callback'),))
             appProcess.append(p)
             p.name = cfg.get(i, 'app_name')
             p.daemon = True
@@ -63,6 +66,7 @@ class SimpleApns(object):
 
 if  '__main__' == __name__:
     simpleapns = SimpleApns()
+#    simpleapns.run()
     runner = DaemonRunner(simpleapns)
     runner.do_action()
 

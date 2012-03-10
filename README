@@ -5,6 +5,7 @@ You can  just config the "config/config.ini" file then put your ssl key file(lik
 
 Then type "python SimpleApns.py start" in the console, so ,it's so simple ！
   certainly you must config Q4M first :)
+  about Q4M: http://q4m.github.com/
 
 *Important*
     This project have not been finished , I must do it for a little more time!
@@ -15,3 +16,4 @@ PLAN:
     1,add feedfack call back action
     2,add redisQ support
     3,add child process check and restart function
+    4,there are so many log lines to clean 

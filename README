@@ -1,6 +1,6 @@
 Simple-Apns is a simple apple notification server for your own apple app use!
 
-You can  just config the "config/config.ini" file then put your ssl key file(like key.pem and cert.pem)
+You can just config the "config/config.ini" file then put your ssl key file(like key.pem and cert.pem)
  into some directorys where this script have priviledge to access
 
 Then type "python SimpleApns.py start" in the console, so ,it's so simple ！

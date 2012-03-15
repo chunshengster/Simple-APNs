@@ -66,6 +66,7 @@ class SimpleApns(object):
 
 if  '__main__' == __name__:
     simpleapns = SimpleApns()
+    #取消下面第一行的注释，同时注释掉后面两行可以取消dameon模式
 #    simpleapns.run()
     runner = DaemonRunner(simpleapns)
     runner.do_action()

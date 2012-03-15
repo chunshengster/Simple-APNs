@@ -5,12 +5,15 @@ Created on 2012-2-28
 
 '''
 
-import apns
+
 import logging
 import MySQLdb
 import time
-import sys, os
+import sys
+import os
 import traceback
+import apns
+
 from python_q4m.q4m import Q4M
 from ssl import SSLError
 
@@ -100,7 +103,7 @@ class App(object):
             if q is not None:
                 if  q.wait(10) == 0:
                     time.sleep(5)
-                    #TODO:在队列空闲的时间内，在apple feedback server获取失效的device token
+                    #TODO(chunshengster):在队列空闲的时间内，在apple feedback server获取失效的device token
                     #self.apns_obj.feedback_server.items()
                 else:
                     res = q.dequeue()
@@ -124,10 +127,10 @@ class App(object):
                 连接队列失败,sleep(120)后重新连接
                 """
                 self.logger.error(
-                    '%s q=ApnsQueue.getQueue(%s, %s, %s, %s, %s, %s), q is None,try to reconnect' %
+                    'q=ApnsQueue.getQueue(%s, %s, %s, %s, %s, %s), q is None,try to reconnect' %
                     (self.mysql_host, self.mysql_port, self.mysql_db, self.mysql_user, self.mysql_pass, self.Q_Table))
                 sys.stderr.writelines(
-                    '%s : %s q=ApnsQueue.getQueue(%s, %s, %s, %s, %s, %s) ,q is None,reconnect \n' %
+                    '%s : q=ApnsQueue.getQueue(%s, %s, %s, %s, %s, %s) ,q is None,reconnect \n' %
                     (time.asctime(), self.mysql_host, self.mysql_port, self.mysql_db, self.mysql_user, self.mysql_pass,
                      self.Q_Table))
                 time.sleep(120)
@@ -201,8 +204,8 @@ class App(object):
                 except Exception as e:
                     sys.stderr.writelines(
                         ('%s : cathe exception of MySQLdb connect with host=%s, port=%s, db=%s,' +
-                         ' user=%s, passwd=%s \n') % (
-                            time.asctime(), mysql_host, mysql_port, db_name, user_name, password))
+                         ' user=%s, passwd=%s, Exception: %s \n') % (
+                            time.asctime(), mysql_host, mysql_port, db_name, user_name, password, str(e)))
                     return None
             return App.ApnsQueue._q
 

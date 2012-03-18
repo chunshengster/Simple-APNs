@@ -6,7 +6,6 @@ Created on 2012-2-25
 simple  apns server for easy use
 '''
 
-import sys
 from ApnsServer import runApp
 from ConfigParser import ConfigParser
 from multiprocessing import Process
@@ -47,12 +46,13 @@ class SimpleApns(object):
             p = Process(target=runApp, args=(cfg.getboolean(i, 'app_sandbox'),
                                              cfg.get(i, 'app_cert'),
                                              cfg.get(i, 'app_key'),
-                                             cfg.get(i, 'db_host'),
-                                             cfg.getint(i,'db_port'),
-                                             cfg.get(i, 'db_name'),
-                                             cfg.get(i, 'db_username'),
-                                             cfg.get(i, 'db_password'),
-                                             cfg.get(i, 'app_queue_table'),
+                                             cfg.get(i,'driver'),
+                                             cfg.get(i, 'queue_host'),
+                                             cfg.getint(i,'queue_port'),
+                                             cfg.get(i, 'queue_db_name'),
+                                             cfg.get(i, 'queue_username'),
+                                             cfg.get(i, 'queue_password'),
+                                             cfg.get(i, 'app_queue_name'),
                                              cfg.get(i, 'app_name'),
                                              cfg.getboolean(i,'debug'),
                                              cfg.get(i,'feedback_callback'),))
@@ -67,8 +67,8 @@ class SimpleApns(object):
 if  '__main__' == __name__:
     simpleapns = SimpleApns()
     #取消下面第一行的注释，同时注释掉后面两行可以取消dameon模式
-#    simpleapns.run()
-    runner = DaemonRunner(simpleapns)
-    runner.do_action()
+    simpleapns.run()
+#    runner = DaemonRunner(simpleapns)
+#    runner.do_action()
 
         

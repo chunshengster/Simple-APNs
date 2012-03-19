@@ -14,6 +14,5 @@ Anyone who is interested in this project can contact with me via chunshengsterAT
 
 PLAN:
     1,add feedfack call back action
-    2,add redisQ support
-    3,add child process check and restart function
-    4,there are so many log lines to clean 
+    2,add child process check and restart function
+    3,there are so many log lines to clean 

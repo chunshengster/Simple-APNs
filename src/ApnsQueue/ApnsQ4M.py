@@ -13,10 +13,10 @@ from python_q4m.q4m import Q4M
 
 class ApnsQ4M(Q4M):
     """
-    create Q4M table:
+    if you want use Q4M as queue provider,you must do this first:
+        create Q4M queue table in mysql:
         'create table xxxx(`device_token` char(64),`payload` varchar(512))
         engine=QUEUE  charset=utf-8'
-    
     """
     con = None
 
@@ -24,14 +24,14 @@ class ApnsQ4M(Q4M):
         (self.mysql_host, self.mysql_port, self.mysql_user, self.mysql_pass, self.mysql_db) = (
             mysql_host, mysql_port, mysql_user, mysql_pass, mysql_db)
 
-        if self.get_conn() is True:
+        if self._get_conn() is True:
             super(self.__class__, self).__init__(self.con)
             self.table = Q_Table
             self.columns = ['device_token', 'payload']
         else:
             return None
 
-    def get_conn(self):
+    def _get_conn(self):
         if not self.con:
             try:
                 self.con = MySQLdb.connect(host=self.mysql_host,

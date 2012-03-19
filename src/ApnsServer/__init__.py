@@ -16,8 +16,8 @@ def runApp(sandBox=True, cert_file='', key_file='', driver='mysql', queue_host='
     else:
         sys.stderr.writelines(
             ('%s : App run failed with parameters : sandBox=%s, cert_file=%s, key_file=%s, queue_host=%s,' +
-             'queue_port=%s, queue_db_name=%s, queue_username=%s, queue_password=%s,Q_name=%s, app_name=%s,is_debug=%s,' +
-             'feedback_callback=%s') %
+             'queue_port=%s, queue_db_name=%s, queue_username=%s, queue_password=%s,Q_name=%s, app_name=%s,'+
+             'is_debug=%s, feedback_callback=%s') %
             (time.asctime(), str(sandBox), cert_file, key_file, queue_host, queue_port, queue_db_name,
              queue_username, queue_password, Q_name, app_name, str(is_debug), feedback_callback))
         return 0

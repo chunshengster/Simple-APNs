@@ -105,26 +105,33 @@ class App(object):
                 if q.wait(10) is 0:
                     time.sleep(5)
                     #TODO(chunshengster):在队列空闲的时间内，在apple feedback server获取失效的device token
-                    #self.apns_obj.feedback_server.items()
+                    for item in self.apns_obj.feedback_server.items():
+                        self.logger.info("got feed back item : %s" % item)
                 else:
-                    item = q.dequeue()
-                    if item is not None:
-                        self.logger.info(
-                            '{0:>s} got item ({1:>s},{2:>s}) in queue {3:>s}'.format(self.app_name, item['device_token']
-                                                                                     ,
-                                                                                     item['payload'], self.Q_name))
-                        res = self._push_to_apple(item['device_token'], item['payload'])
-                        if res is None:
-                            """
-                            队列回退,队列元素退回,目前在SSLError的情况下会返回None,sleep(10)
-                            """
-                            q.abort()
-                            time.sleep(10)
-                        elif res is False:
-                            """
-                            发送数据异常,抛弃队列元素
-                            """
-                            q.end()
+                    try:
+                        item = q.dequeue()
+                        if item is not None:
+                            self.logger.info(
+                                '{0:>s} got item ({1:>s},{2:>s}) in queue {3:>s}'.format(self.app_name, item['device_token']
+                                                                                         ,
+                                                                                         item['payload'], self.Q_name))
+                            res = self._push_to_apple(item['device_token'], item['payload'])
+                            if res is None:
+                                """
+                                队列回退,队列元素退回,目前在SSLError的情况下会返回None,sleep(10)
+                                """
+                                q.abort()
+                                time.sleep(10)
+                            elif res is False:
+                                """
+                                发送数据异常,抛弃队列元素
+                                """
+                                q.end()
+                    except Exception as e:
+                        exc_type, exc_value, exc_traceback = sys.exc_info()
+                        traceback.print_exception(exc_type, exc_value, exc_traceback,
+                                      limit=2, file=sys.stderr)
+
             else:
                 """
                 连接队列失败,sleep(120)后重新连接

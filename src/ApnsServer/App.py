@@ -166,6 +166,8 @@ class App(object):
                 '{0:>s} : {1:>s} got error {2:>s} : {3:>s} Error : {4:>s} \n'.format(time.asctime(), self.app_name,
                                                                                      device_token, payload_json,
                                                                                      str(e)))
+            self.apns_obj = None;
+            self.apns_obj = apns.APNs(use_sandbox=self.sandBox, cert_file=self.cert_file, key_file=self.key_file)
             return None
         except ValueError as e:
             #For json string error:not a standard json string
